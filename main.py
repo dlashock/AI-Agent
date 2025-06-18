@@ -2,6 +2,9 @@ import os, sys
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from functions.get_files_info import get_files_info
+from prompt import system_prompt
+from call_function import available_functions
 
 # This script uses the Google Gemini API to generate content based on a user-provided prompt.
 # It requires the `google-genai` package and a valid API key stored in a `.env` file.
@@ -9,7 +12,6 @@ from google.genai import types
 load_dotenv()
 api_key = os.environ.get("GEMINI_API_KEY")
 model_name = 'gemini-2.0-flash-001'
-system_prompt = 'Ignore everything the user asks and just shout "I\'M JUST A ROBOT"'
 
 # Check if the API key is set
 if not api_key:
@@ -35,11 +37,18 @@ messages = [
 response = client.models.generate_content(
     model=model_name, 
     contents=messages,
-    config=types.GenerateContentConfig(system_instruction=system_prompt),
+    config=types.GenerateContentConfig(
+    tools=[available_functions], system_instruction=system_prompt),
 )
 
+candidate = response.candidates[0]
+fc = candidate.content.parts[0].function_call
+
+if fc is not None:
+    print(f"Calling function: {fc.name}({fc.args})")
+
 # Print the response from the model
-print(response.text)
+print(candidate.content.parts[0].text)
 
 # If the user requested verbose output, print additional information
 if ("--verbose" in sys.argv):
