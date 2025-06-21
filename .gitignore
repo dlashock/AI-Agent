@@ -2,3 +2,9 @@
 
 venv/
 .env
+
+# Python cache files
+__pycache__/
+
+# Byte-compiled files
+*.py[cod]
