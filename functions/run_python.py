@@ -52,7 +52,8 @@ schema_run_python = types.FunctionDeclaration(
         properties={
             "args": types.Schema(
                 type=types.Type.STRING,
-                description="The arguments to provide when running the Python file. These are not required, but can be used to pass commands to the Python script (e.g., '--verbose' or '--help').",
+                description="The arguments to provide when running the Python file. These are not required, " \
+                "but can be used to pass commands to the Python script (e.g., '--verbose' or '--help').",
             ),
             "file_path": types.Schema(
                 type=types.Type.STRING,
