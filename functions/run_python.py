@@ -2,25 +2,25 @@ import os
 import subprocess
 from google.genai import types
 
-def run_python_file(working_directory, file, args=None):
+def run_python_file(working_directory, file_path, args=None):
     try:
        working_path = os.path.abspath(working_directory)
     except Exception:
         return f'Error: Invalid working directory "{working_directory}"'
 
     try:
-        file_path = os.path.abspath(os.path.join(working_path, file))
+        file_path = os.path.abspath(os.path.join(working_path, file_path))
     except Exception:
-        return f'Error: Invalid file path "{file}"'
+        return f'Error: Invalid file path "{file_path}"'
 
     if not file_path.startswith(working_path):
-        return f'Error: Cannot execute "{file}" as it is outside the permitted working directory'
+        return f'Error: Cannot execute "{file_path}" as it is outside the permitted working directory'
     
     if not os.path.exists(file_path):
-        return f'Error: File "{file}" not found'
+        return f'Error: File "{file_path}" not found'
     
     if not file_path.endswith(".py"):
-        return f'Error: File "{file}" is not a Python file'
+        return f'Error: File "{file_path}" is not a Python file'
         
     try:
         commands = ["python", file_path]
@@ -33,11 +33,11 @@ def run_python_file(working_directory, file, args=None):
             timeout=30,
             cwd=working_path,
         )
-
+        
         if not result.stdout:
             print("No output produced")
         else:
-            print(f'STDOUT: {result.stdout.decode("utf-8")}')
+            print(f'STDOUT: {result.stdout}')
         print(f"STDERR: {result.stderr}")
         if result.returncode != 0:
             return f'Process exited with code {result.returncode}'
